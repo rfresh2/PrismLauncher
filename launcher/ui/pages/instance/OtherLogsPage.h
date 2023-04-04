@@ -100,4 +100,5 @@ private:
     QString m_currentFile;
     IPathMatcher::Ptr m_fileFilter;
     RecursiveFileSystemWatcher *m_watcher;
+    bool m_watcher_initialized;
 };
