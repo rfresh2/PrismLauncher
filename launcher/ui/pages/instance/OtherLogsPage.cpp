@@ -53,7 +53,7 @@ OtherLogsPage::OtherLogsPage(QString path, IPathMatcher::Ptr fileFilter, QWidget
     ui->tabWidget->tabBar()->hide();
 
     m_watcher->setMatcher(fileFilter);
-    m_watcher->setRootDir(QDir::current().absoluteFilePath(m_path));
+    m_watcher_initialized = false;
 
     connect(m_watcher, &RecursiveFileSystemWatcher::filesChanged, this, &OtherLogsPage::populateSelectLogBox);
     populateSelectLogBox();
@@ -82,6 +82,10 @@ void OtherLogsPage::retranslate()
 
 void OtherLogsPage::openedImpl()
 {
+    if (!m_watcher_initialized) {
+        m_watcher->setRootDir(QDir::current().absoluteFilePath(m_path));
+        m_watcher_initialized = true;
+    }
     m_watcher->enable();
 }
 void OtherLogsPage::closedImpl()

@@ -44,6 +44,10 @@ class InstancePageProvider : protected QObject, public BasePageProvider {
         // values.append(new GameOptionsPage(onesix.get()));
         values.append(new ScreenshotsPage(FS::PathCombine(onesix->gameRoot(), "screenshots")));
         values.append(new InstanceSettingsPage(onesix.get()));
+        auto logMatcher = inst->getLogFileMatcher();
+        if (logMatcher) {
+            values.append(new OtherLogsPage(inst->getLogFileRoot(), logMatcher));
+        }
         return values;
     }
 
