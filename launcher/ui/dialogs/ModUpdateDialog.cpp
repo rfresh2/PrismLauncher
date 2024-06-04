@@ -65,27 +65,6 @@ void ModUpdateDialog::checkCandidates()
         return;
     }
 
-    // Report failed metadata generation
-    if (!m_failed_metadata.empty()) {
-        QString text;
-        for (const auto& failed : m_failed_metadata) {
-            const auto& mod = std::get<0>(failed);
-            const auto& reason = std::get<1>(failed);
-            text += tr("Mod name: %1<br>File name: %2<br>Reason: %3<br><br>").arg(mod->name(), mod->fileinfo().fileName(), reason);
-        }
-
-        ScrollMessageBox message_dialog(m_parent, tr("Metadata generation failed"),
-                                        tr("Could not generate metadata for the following mods:<br>"
-                                           "Do you wish to proceed without those mods?"),
-                                        text);
-        message_dialog.setModal(true);
-        if (message_dialog.exec() == QDialog::Rejected) {
-            m_aborted = true;
-            QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
-            return;
-        }
-    }
-
     auto versions = mcVersions(m_instance);
     auto loadersList = mcLoadersList(m_instance);
 
@@ -152,38 +131,6 @@ void ModUpdateDialog::checkCandidates()
             m_tasks.insert(updatable.name, updatable.download);
         }
         selectedVers.append(m_flame_check_task->getDependencies());
-    }
-
-    // Report failed update checking
-    if (!m_failed_check_update.empty()) {
-        QString text;
-        for (const auto& failed : m_failed_check_update) {
-            const auto& mod = std::get<0>(failed);
-            const auto& reason = std::get<1>(failed);
-            const auto& recover_url = std::get<2>(failed);
-
-            qDebug() << mod->name() << " failed to check for updates!";
-
-            text += tr("Mod name: %1").arg(mod->name()) + "<br>";
-            if (!reason.isEmpty())
-                text += tr("Reason: %1").arg(reason) + "<br>";
-            if (!recover_url.isEmpty())
-                //: %1 is the link to download it manually
-                text += tr("Possible solution: Getting the latest version manually:<br>%1<br>")
-                            .arg(QString("<a href='%1'>%1</a>").arg(recover_url.toString()));
-            text += "<br>";
-        }
-
-        ScrollMessageBox message_dialog(m_parent, tr("Failed to check for updates"),
-                                        tr("Could not check or get the following mods for updates:<br>"
-                                           "Do you wish to proceed without those mods?"),
-                                        text);
-        message_dialog.setModal(true);
-        if (message_dialog.exec() == QDialog::Rejected) {
-            m_aborted = true;
-            QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
-            return;
-        }
     }
 
     if (m_include_deps && !APPLICATION->settings()->get("ModDependenciesDisabled").toBool()) {  // dependencies
@@ -303,27 +250,10 @@ auto ModUpdateDialog::ensureMetadata() -> bool
             continue;
         }
 
-        ChooseProviderDialog chooser(this);
-        chooser.setDescription(tr("The mod '%1' does not have a metadata yet. We need to generate it in order to track relevant "
-                                  "information on how to update this mod. "
-                                  "To do this, please select a mod provider which we can use to check for updates for this mod.")
-                                   .arg(candidate->name()));
-        auto confirmed = chooser.exec() == QDialog::DialogCode::Accepted;
-
-        auto response = chooser.getResponse();
-
-        if (response.skip_all)
-            skip_rest = true;
-        if (response.confirm_all) {
-            confirm_rest = true;
-            provider_rest = response.chosen;
-            try_others_rest = response.try_others;
-        }
-
-        should_try_others.insert(candidate->internal_id(), response.try_others);
-
-        if (confirmed)
-            addToTmp(candidate, response.chosen);
+        confirm_rest = true;
+        try_others_rest = true;
+        should_try_others.insert(candidate->internal_id(), true);
+        addToTmp(candidate, ModPlatform::ResourceProvider::MODRINTH);
     }
 
     if (!modrinth_tmp.empty()) {
