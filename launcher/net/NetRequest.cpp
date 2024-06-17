@@ -63,6 +63,13 @@ void NetRequest::addValidator(Validator* v)
 void NetRequest::executeTask()
 {
     setStatus(tr("Requesting %1").arg(StringUtils::truncateUrlHumanFriendly(m_url, 80)));
+    qDebug() << "Requesting" << m_url.toString();
+    if (m_url.isEmpty()) {
+        qCWarning(logCat) << getUid().toString() << "Attempt to start an empty Request";
+        emit failed("Empty URL");
+        emit finished();
+        return;
+    }
 
     if (getState() == Task::State::AbortedByUser) {
         qCWarning(logCat) << getUid().toString() << "Attempt to start an aborted Request:" << m_url.toString();
