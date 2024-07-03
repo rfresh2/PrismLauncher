@@ -70,10 +70,11 @@ jobs:
       matrix:
         include:
           - os: windows-2022
-            artifact-name: Windows-MSVC
-            base-cmake-preset: windows_msvc
-            # TODO(@getchoo): This is the default in setup-dependencies/windows. Why isn't it working?!?!
-            vcvars-arch: amd64
+            name: "Windows-MSVC"
+            cmake_preset: windows_msvc 
+            msystem: ""
+            architecture: "x64"
+            vcvars_arch: "amd64"
 
     runs-on: ${{ matrix.os }}
 
