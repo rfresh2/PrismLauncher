@@ -1,7 +1,6 @@
 name: Backport
 on:
-  pull_request_target:
-    types: [closed, labeled]
+  workflow_dispatch:
 
 # WARNING:
 # When extending this action, be aware that $GITHUB_TOKEN allows write access to
