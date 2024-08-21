@@ -339,6 +339,32 @@ QList<QString> JavaUtils::FindJavaPaths()
 
     java_candidates.append(MakeJavaPtr(this->GetDefaultJava()->path));
 
+    QList<QString> javas;
+    auto scanJavaDir = [&](const QString& dirPath) {
+        QDir dir(dirPath);
+        if (!dir.exists())
+            return;
+        auto entries = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for (auto& entry : entries) {
+            QString prefix;
+            prefix = entry.canonicalFilePath();
+            javas.append(FS::PathCombine(prefix, "jre/bin/javaw.exe"));
+            javas.append(FS::PathCombine(prefix, "bin/javaw.exe"));
+        }
+    };
+    auto scanJavaDirs = [&](const QString& dirPath) {
+        scanJavaDir(dirPath);
+    };
+    auto homePath = qEnvironmentVariable("userprofile");
+    if (!homePath.isEmpty()) {
+        qDebug() << "Scanning user home for jdks";
+        scanJavaDirs(homePath + "/.jdks");
+    }
+
+    for (auto& javaDir : javas) {
+        java_candidates.append(MakeJavaPtr(javaDir));
+    }
+
     QList<QString> candidates;
     for (JavaInstallPtr java_candidate : java_candidates) {
         if (!candidates.contains(java_candidate->path)) {
