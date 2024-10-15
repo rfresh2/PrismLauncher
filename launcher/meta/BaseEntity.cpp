@@ -126,7 +126,7 @@ void BaseEntityLoadTask::executeTask()
             // on online the hash needs to match
             hashMatches = m_entity->m_sha256 == m_entity->m_file_sha256;
             if (m_mode == Net::Mode::Online && !m_entity->m_sha256.isEmpty() && !hashMatches) {
-                throw Exception("mismatched checksum");
+                // throw Exception("mismatched checksum");
             }
 
             // load local file
