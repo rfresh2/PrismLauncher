@@ -1,59 +1,6 @@
 name: Nix
 
 on:
-  push:
-    tags:
-      - "*"
-    paths:
-      # File types
-      - "**.cpp"
-      - "**.h"
-      - "**.java"
-
-      # Build files
-      - "**.nix"
-      - "nix/"
-      - "flake.lock"
-
-      # Directories
-      - "buildconfig/"
-      - "cmake/"
-      - "launcher/"
-      - "libraries/"
-      - "program_info/"
-      - "tests/"
-
-      # Files
-      - "CMakeLists.txt"
-      - "COPYING.md"
-
-      # Workflows
-      - ".github/workflows/nix.yml"
-  pull_request_target:
-    paths:
-      # File types
-      - "**.cpp"
-      - "**.h"
-
-      # Build files
-      - "**.nix"
-      - "nix/"
-      - "flake.lock"
-
-      # Directories
-      - "buildconfig/"
-      - "cmake/"
-      - "launcher/"
-      - "libraries/"
-      - "program_info/"
-      - "tests/"
-
-      # Files
-      - "CMakeLists.txt"
-      - "COPYING.md"
-
-      # Workflows
-      - ".github/workflows/nix.yml"
   workflow_dispatch:
 
 permissions:
