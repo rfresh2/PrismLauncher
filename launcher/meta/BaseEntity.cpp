@@ -123,12 +123,6 @@ void BaseEntityLoadTask::executeTask()
                 m_entity->m_file_sha256 = Hashing::hash(fileData, Hashing::Algorithm::Sha256);
             }
 
-            // on online the hash needs to match
-            hashMatches = m_entity->m_sha256 == m_entity->m_file_sha256;
-            if (m_mode == Net::Mode::Online && !m_entity->m_sha256.isEmpty() && !hashMatches) {
-                throw Exception("mismatched checksum");
-            }
-
             // load local file
             if (m_entity->m_load_status == BaseEntity::LoadStatus::NotLoaded) {
                 auto doc = Json::requireDocument(fileData, fname);
