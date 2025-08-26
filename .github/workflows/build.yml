@@ -92,7 +92,6 @@ jobs:
             artifact-name: Linux
             cmake-preset: linux
             qt-version: 6.10.1
-
           - os: windows-2022
             artifact-name: Windows-MinGW-w64
             cmake-preset: windows_mingw

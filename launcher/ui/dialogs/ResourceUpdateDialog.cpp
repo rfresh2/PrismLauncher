@@ -134,8 +134,8 @@ void ResourceUpdateDialog::checkCandidates()
         selectedVers.append(m_flameCheckTask->getDependencies());
     }
 
-    if (m_include_deps && !APPLICATION->settings()->get("ModDependenciesDisabled").toBool()) {  // dependencies
-        auto* mod_model = dynamic_cast<ModFolderModel*>(m_resource_model.get());
+    if (m_includeDeps && !APPLICATION->settings()->get("ModDependenciesDisabled").toBool()) {  // dependencies
+        auto* mod_model = dynamic_cast<ModFolderModel*>(m_resourceModel.get());
 
         if (mod_model != nullptr) {
             auto depTask = makeShared<GetModDependenciesTask>(m_instance, mod_model, selectedVers);
